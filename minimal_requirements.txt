@@ -1,0 +1,3 @@
+# Minimal requirements for Smart Library System
+Django>=5.1.1
+opencv-python>=4.12.0.88

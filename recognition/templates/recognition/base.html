@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Library System{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #06d6a0;
+            --danger: #ef476f;
+            --warning: #ffd166;
+            --info: #118ab2;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --box-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #f5f7fb;
+            color: var(--gray-800);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            color: white;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            transition: var(--transition);
+            box-shadow: var(--box-shadow-lg);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 1.5rem;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h2 {
+            font-size: 1.5rem;
+            color: var(--gray-900);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info .name {
+            font-weight: 600;
+            display: block;
+        }
+
+        .user-info .role {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        /* Content area */
+        .content-wrapper {
+            flex: 1;
+            padding: 2rem 1.5rem;
+        }
+
+        .content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .page-header h2 {
+            font-size: 1.75rem;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: white;
+            color: var(--gray-600);
+            border-top: 1px solid var(--gray-200);
+            margin-top: auto;
+        }
+
+        /* Utility classes */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow-lg);
+        }
+
+        .btn:disabled {
+            background-color: var(--gray-400);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #05b88f;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--gray-900);
+        }
+
+        .btn-warning:hover {
+            background-color: #ffc44d;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #e03a67;
+        }
+
+        .btn-secondary {
+            background-color: var(--gray-600);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gray-700);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .alert {
+            padding: 1.25rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .alert i {
+            font-size: 1.5rem;
+            margin-top: 0.1rem;
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .alert-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .alert-info {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .form-text {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+        }
+
+        /* Table styles */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        th {
+            background-color: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: var(--gray-50);
+        }
+
+        /* Card styles */
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .card-header h3 {
+            font-size: 1.25rem;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Grid system */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -1rem;
+        }
+
+        .col {
+            flex: 1;
+            padding: 0 1rem;
+        }
+
+        .col-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 1rem;
+        }
+
+        .col-4 {
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+            padding: 0 1rem;
+        }
+
+        .col-3 {
+            flex: 0 0 25%;
+            max-width: 25%;
+            padding: 0 1rem;
+        }
+
+        .justify-content-center {
+            justify-content: center;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-danger {
+            color: var(--danger);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.5em;
+            font-size: 0.75em;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: var(--border-radius);
+        }
+
+        .badge.bg-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .badge.bg-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            padding: 0;
+            background-color: white;
+            color: var(--gray-700);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-300);
+            transition: var(--transition);
+        }
+
+        .page-link:hover, .page-link.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Input group */
+        .input-group {
+            display: flex;
+        }
+
+        .input-group .form-control {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .input-group .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            box-shadow: none;
+        }
+
+        /* Responsive design */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar .sidebar-header h1 span,
+            .sidebar .nav-link span,
+            .sidebar .sidebar-footer {
+                display: none;
+            }
+            
+            .sidebar .sidebar-header,
+            .sidebar .nav-link {
+                justify-content: center;
+                padding: 1rem;
+            }
+            
+            .sidebar .nav-link {
+                gap: 0;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            .row {
+                flex-direction: column;
+                margin: 0;
+            }
+            
+            .col, .col-6, .col-4, .col-3 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1><i class="fas fa-book"></i> <span>Smart Library</span></h1>
+        </div>
+        
+        <div class="sidebar-nav">
+            {% if user.is_authenticated %}
+                {% if user.userprofile.user_type == 'super_admin' %}
+                    <div class="nav-item">
+                        <a href="{% url 'recognition:super_admin_dashboard' %}" class="nav-link {% if 'super_admin_dashboard' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-building"></i>
+                            <span>Franchises</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Reports</span>
+                        </a>
+                    </div>
+                {% elif user.userprofile.user_type == 'franchise_owner' %}
+                    <div class="nav-item">
+                        <a href="{% url 'recognition:franchise_owner_dashboard' %}" class="nav-link {% if 'franchise_owner_dashboard' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'recognition:book_list' %}" class="nav-link {% if 'book_list' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-book"></i>
+                            <span>Books</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Transactions</span>
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="nav-item">
+                        <a href="{% url 'recognition:user_dashboard' %}" class="nav-link {% if 'user_dashboard' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'recognition:book_list' %}" class="nav-link {% if 'book_list' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-book"></i>
+                            <span>Browse Books</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'recognition:book_issue' %}" class="nav-link {% if 'book_issue' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Issue Books</span>
+                        </a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="nav-item">
+                    <a href="{% url 'recognition:index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </div>
+            {% endif %}
+            
+            <div class="nav-item">
+                <a href="{% url 'admin:index' %}" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Admin Panel</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <p>Smart Library System v1.0</p>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h2>{% block header_title %}Dashboard{% endblock %}</h2>
+                </div>
+                <div class="user-menu">
+                    {% if user.is_authenticated %}
+                        <div class="user-info">
+                            <span class="name">{{ user.first_name }} {{ user.last_name }}</span>
+                            <span class="role">
+                                {% if user.userprofile.user_type == 'super_admin' %}
+                                    Super Admin
+                                {% elif user.userprofile.user_type == 'franchise_owner' %}
+                                    Franchise Owner
+                                {% else %}
+                                    Student/User
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <form method="post" action="{% url 'recognition:logout' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline" style="margin-left: 10px;">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'recognition:login' %}" class="btn btn-outline">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-wrapper">
+            <main class="content">
+                {% block messages %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                <i class="fas fa-info-circle"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endblock %}
+                
+                {% block content %}
+                <!-- Page content will go here -->
+                {% endblock %}
+            </main>
+        </div>
+        
+        <footer class="footer">
+            {% block footer %}
+            <p>&copy; 2025 Smart Library System. All rights reserved.</p>
+            {% endblock %}
+        </footer>
+    </div>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,110 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Face Records - Facial Recognition System{% endblock %}
+
+{% block header_title %}Face Records{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-database"></i> Face Records</h2>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-list"></i> All Face Records</h3>
+    </div>
+    
+    {% if page_obj %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in page_obj %}
+                    <tr>
+                        <td>{{ record.id }}</td>
+                        <td>{{ record.name }}</td>
+                        <td>{{ record.created_at|date:"M d, Y H:i" }}</td>
+                        <td>{{ record.updated_at|date:"M d, Y H:i" }}</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="#" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="#" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No face records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                
+                <li class="page-item active">
+                    <span class="page-link">
+                        {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info">
+            <p>No face records available.</p>
+        </div>
+    {% endif %}
+</div>
+
+<div style="text-align: center;">
+    <a href="{% url 'recognition:index' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+    <a href="#" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add New Face Record
+    </a>
+</div>
+{% endblock %}

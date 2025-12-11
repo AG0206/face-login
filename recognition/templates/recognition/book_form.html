@@ -1,0 +1,122 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Smart Library - {% if action == 'Add' %}Add{% else %}Edit{% endif %} Book{% endblock %}
+
+{% block header_title %}{% if action == 'Add' %}Add{% else %}Edit{% endif %} Book{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-book"></i> {% if action == 'Add' %}Add{% else %}Edit{% endif %} Book</h2>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-book"></i> Book Information</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.title.id_for_label }}">Title</label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="text-danger">{{ form.title.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.author.id_for_label }}">Author</label>
+                                {{ form.author }}
+                                {% if form.author.errors %}
+                                    <div class="text-danger">{{ form.author.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.isbn.id_for_label }}">ISBN</label>
+                                {{ form.isbn }}
+                                {% if form.isbn.errors %}
+                                    <div class="text-danger">{{ form.isbn.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.genre.id_for_label }}">Genre</label>
+                                {{ form.genre }}
+                                {% if form.genre.errors %}
+                                    <div class="text-danger">{{ form.genre.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.publisher.id_for_label }}">Publisher</label>
+                                {{ form.publisher }}
+                                {% if form.publisher.errors %}
+                                    <div class="text-danger">{{ form.publisher.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.publication_date.id_for_label }}">Publication Date</label>
+                                {{ form.publication_date }}
+                                {% if form.publication_date.errors %}
+                                    <div class="text-danger">{{ form.publication_date.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.total_copies.id_for_label }}">Total Copies</label>
+                                {{ form.total_copies }}
+                                {% if form.total_copies.errors %}
+                                    <div class="text-danger">{{ form.total_copies.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.available_copies.id_for_label }}">Available Copies</label>
+                                {{ form.available_copies }}
+                                {% if form.available_copies.errors %}
+                                    <div class="text-danger">{{ form.available_copies.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn w-100">
+                        <i class="fas fa-save"></i> {% if action == 'Add' %}Add{% else %}Update{% endif %} Book
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <a href="{% url 'recognition:franchise_owner_dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

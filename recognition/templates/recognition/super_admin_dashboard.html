@@ -1,0 +1,216 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Smart Library - Super Admin Dashboard{% endblock %}
+
+{% block header_title %}Super Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-user-shield"></i> Super Admin Dashboard</h2>
+    <p>System-wide overview and management</p>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-building fa-3x mb-3" style="color: #4361ee;"></i>
+                <h3>{{ total_franchises }}</h3>
+                <p>Total Franchises</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-users fa-3x mb-3" style="color: #7209b7;"></i>
+                <h3>{{ total_users }}</h3>
+                <p>Total Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-book fa-3x mb-3" style="color: #06d6a0;"></i>
+                <h3>{{ total_books }}</h3>
+                <p>Total Books</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-exchange-alt fa-3x mb-3" style="color: #ef476f;"></i>
+                <h3>{{ total_issued_books }}</h3>
+                <p>Books Issued</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-chart-bar"></i> System Reports</h3>
+            </div>
+            <div class="card-body">
+                <h4>Top Franchises by Book Count</h4>
+                {% if franchise_stats %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Franchise</th>
+                                    <th>Location</th>
+                                    <th>Books</th>
+                                    <th>Users</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for franchise in franchise_stats %}
+                                <tr>
+                                    <td>{{ franchise.name }}</td>
+                                    <td>{{ franchise.location }}</td>
+                                    <td>{{ franchise.book_count }}</td>
+                                    <td>{{ franchise.user_count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>No franchise data available.</p>
+                {% endif %}
+                
+                <h4 class="mt-4">User Growth</h4>
+                <p>Coming soon...</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-building"></i> Recent Franchises</h3>
+            </div>
+            <div class="card-body">
+                {% if recent_franchises %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Location</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for franchise in recent_franchises %}
+                                <tr>
+                                    <td>{{ franchise.name }}</td>
+                                    <td>{{ franchise.location }}</td>
+                                    <td>{{ franchise.created_at|date:"M d, Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>No franchises found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-users"></i> User Management</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>User Type</th>
+                        <th>Franchise</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if user.userprofile.user_type == 'super_admin' %}
+                                <span class="badge bg-danger">Super Admin</span>
+                            {% elif user.userprofile.user_type == 'franchise_owner' %}
+                                <span class="badge bg-warning">Franchise Owner</span>
+                            {% else %}
+                                <span class="badge bg-info">Student</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.userprofile.franchise %}
+                                {{ user.userprofile.franchise.name }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.userprofile.user_type != 'super_admin' %}
+                                <a href="{% url 'recognition:reset_user_password' user.id %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-key"></i> Reset Password
+                                </a>
+                            {% else %}
+                                <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-cogs"></i> System Management</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <a href="#" class="btn btn-secondary w-100 mb-3">
+                    <i class="fas fa-building"></i> Manage Franchises
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="#" class="btn btn-secondary w-100 mb-3">
+                    <i class="fas fa-book"></i> Manage Books
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="#" class="btn btn-secondary w-100 mb-3">
+                    <i class="fas fa-chart-line"></i> View Reports
+                </a>
+            </div>
+            <div class="col-md-3">
+                <form method="post" action="{% url 'recognition:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-100 mb-3">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

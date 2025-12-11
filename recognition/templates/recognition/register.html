@@ -1,0 +1,144 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Smart Library - Register{% endblock %}
+
+{% block header_title %}Student Registration{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-user-plus"></i> Register as a Student</h2>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-graduation-cap"></i> Student Registration Form</h3>
+            </div>
+            <div class="card-body">
+                <!-- Display messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Display non-field errors -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_username">Username</label>
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="text-danger">{{ form.username.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_email">Email</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_first_name">First Name</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger">{{ form.first_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_last_name">Last Name</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger">{{ form.last_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_password1">Password</label>
+                                {{ form.password1 }}
+                                <small class="form-text text-muted">Your password must contain at least 8 characters and should not be entirely numeric or too common.</small>
+                                {% if form.password1.errors %}
+                                    <div class="text-danger">{{ form.password1.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_password2">Confirm Password</label>
+                                {{ form.password2 }}
+                                <small class="form-text text-muted">Enter the same password as above for verification.</small>
+                                {% if form.password2.errors %}
+                                    <div class="text-danger">{{ form.password2.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_franchise">Select Franchise</label>
+                                {{ form.franchise }}
+                                {% if form.franchise.errors %}
+                                    <div class="text-danger">{{ form.franchise.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_phone_number">Phone Number (Optional)</label>
+                                {{ form.phone_number }}
+                                {% if form.phone_number.errors %}
+                                    <div class="text-danger">{{ form.phone_number.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn w-100">
+                        <i class="fas fa-user-plus"></i> Register
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p>Already have an account?</p>
+                    <a href="{% url 'recognition:login' %}" class="btn btn-outline">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="{% url 'recognition:index' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

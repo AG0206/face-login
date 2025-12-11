@@ -1,0 +1,117 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Smart Library - Home{% endblock %}
+
+{% block header_title %}Welcome to Smart Library{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-book"></i> Smart Library System</h2>
+    <p>A modern digital library system with multi-login and face recognition capabilities</p>
+</div>
+
+<div class="row">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-sign-in-alt"></i> Login to Your Account</h3>
+            </div>
+            <div class="card-body">
+                <p>Choose your login option based on your role in the system:</p>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <a href="{% url 'recognition:login' %}?user_type=super_admin" class="btn btn-secondary w-100 mb-3">
+                            <i class="fas fa-user-shield"></i> Super Admin Login
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'recognition:login' %}?user_type=franchise_owner" class="btn btn-secondary w-100 mb-3">
+                            <i class="fas fa-user-tie"></i> Franchise Owner Login
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'recognition:login' %}?user_type=student" class="btn btn-secondary w-100 mb-3">
+                            <i class="fas fa-user-graduate"></i> User Login
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'recognition:login' %}?login_method=face" class="btn btn-outline w-100 mb-3">
+                            <i class="fas fa-camera"></i> Face Recognition Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-user-plus"></i> New User Registration</h3>
+            </div>
+            <div class="card-body">
+                <p>Register for a new account based on your role:</p>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <a href="{% url 'recognition:register' %}" class="btn btn-success w-100 mb-3">
+                            <i class="fas fa-user"></i> Student Registration
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'recognition:franchise_owner_register' %}" class="btn btn-warning w-100 mb-3">
+                            <i class="fas fa-building"></i> Franchise Registration
+                        </a>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h4><i class="fas fa-info-circle"></i> System Overview</h4>
+                <ul>
+                    <li>3-level login system (Super Admin, Franchise Owner, User)</li>
+                    <li>Franchise-based tracking of books and users</li>
+                    <li>Dual login option for users (face + password)</li>
+                    <li>Advanced facial recognition technology</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-graduation-cap"></i> About Smart Library</h3>
+    </div>
+    <div class="card-body">
+        <p>The Smart Library is a modern digital library system designed to work across multiple franchise branches. 
+        It provides three levels of login (HQ Admin, Franchise Owner, User/Student) and dual authentication methods 
+        (Email/Password or Face Recognition).</p>
+        
+        <div class="row">
+            <div class="col-4">
+                <div class="text-center p-3">
+                    <i class="fas fa-university fa-3x mb-3" style="color: #4361ee;"></i>
+                    <h4>Franchise Management</h4>
+                    <p>Each franchise is managed independently by its owner while being monitored centrally.</p>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="text-center p-3">
+                    <i class="fas fa-users fa-3x mb-3" style="color: #7209b7;"></i>
+                    <h4>Multi-Level Access</h4>
+                    <p>Three distinct user roles with appropriate permissions for each level.</p>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="text-center p-3">
+                    <i class="fas fa-fingerprint fa-3x mb-3" style="color: #06d6a0;"></i>
+                    <h4>Face Recognition</h4>
+                    <p>Advanced biometric authentication for secure and convenient access.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

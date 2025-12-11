@@ -1,0 +1,161 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Smart Library - Franchise Registration{% endblock %}
+
+{% block header_title %}Franchise Owner Registration{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-building"></i> Register a New Franchise</h2>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-store"></i> Franchise Owner Registration Form</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-user-tie"></i> Owner Information</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_username">Username</label>
+                                        {{ form.username }}
+                                        {% if form.username.errors %}
+                                            <div class="text-danger">{{ form.username.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_email">Email</label>
+                                        {{ form.email }}
+                                        {% if form.email.errors %}
+                                            <div class="text-danger">{{ form.email.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_first_name">First Name</label>
+                                        {{ form.first_name }}
+                                        {% if form.first_name.errors %}
+                                            <div class="text-danger">{{ form.first_name.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_last_name">Last Name</label>
+                                        {{ form.last_name }}
+                                        {% if form.last_name.errors %}
+                                            <div class="text-danger">{{ form.last_name.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_password1">Password</label>
+                                        {{ form.password1 }}
+                                        {% if form.password1.errors %}
+                                            <div class="text-danger">{{ form.password1.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_password2">Confirm Password</label>
+                                        {{ form.password2 }}
+                                        {% if form.password2.errors %}
+                                            <div class="text-danger">{{ form.password2.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h4><i class="fas fa-building"></i> Franchise Information</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_franchise_name">Franchise Name</label>
+                                        {{ form.franchise_name }}
+                                        {% if form.franchise_name.errors %}
+                                            <div class="text-danger">{{ form.franchise_name.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_franchise_location">Franchise Location</label>
+                                        {{ form.franchise_location }}
+                                        {% if form.franchise_location.errors %}
+                                            <div class="text-danger">{{ form.franchise_location.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_franchise_email">Franchise Contact Email</label>
+                                        {{ form.franchise_email }}
+                                        {% if form.franchise_email.errors %}
+                                            <div class="text-danger">{{ form.franchise_email.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_franchise_phone">Franchise Contact Phone</label>
+                                        {{ form.franchise_phone }}
+                                        {% if form.franchise_phone.errors %}
+                                            <div class="text-danger">{{ form.franchise_phone.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn w-100 mt-4">
+                        <i class="fas fa-store"></i> Register Franchise
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p>Already have an account?</p>
+                    <a href="{% url 'recognition:login' %}" class="btn btn-outline">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="{% url 'recognition:index' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

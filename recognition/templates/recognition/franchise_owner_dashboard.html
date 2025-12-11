@@ -1,0 +1,153 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Smart Library - Franchise Owner Dashboard{% endblock %}
+
+{% block header_title %}Franchise Owner Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-user-tie"></i> {{ franchise.name }} Dashboard</h2>
+    <p>Managing your franchise: {{ franchise.location }}</p>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-book fa-3x mb-3" style="color: #4361ee;"></i>
+                <h3>{{ total_books }}</h3>
+                <p>Total Books</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-users fa-3x mb-3" style="color: #7209b7;"></i>
+                <h3>{{ total_users }}</h3>
+                <p>Total Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-exchange-alt fa-3x mb-3" style="color: #06d6a0;"></i>
+                <h3>{{ issued_books }}</h3>
+                <p>Books Issued</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-coins fa-3x mb-3" style="color: #ef476f;"></i>
+                <h3>$0.00</h3>
+                <p>Revenue</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-book"></i> Recent Books</h3>
+            </div>
+            <div class="card-body">
+                {% if recent_books %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Available</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for book in recent_books %}
+                                <tr>
+                                    <td>{{ book.title }}</td>
+                                    <td>{{ book.author }}</td>
+                                    <td>{{ book.available_copies }}</td>
+                                    <td>{{ book.total_copies }}</td>
+                                    <td>
+                                        <a href="{% url 'recognition:book_edit' book.id %}" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="{% url 'recognition:book_delete' book.id %}" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>No books found in your franchise.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-tasks"></i> Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'recognition:book_create' %}" class="btn btn-success w-100 mb-3">
+                    <i class="fas fa-plus-circle"></i> Add New Book
+                </a>
+                <a href="{% url 'recognition:book_list' %}" class="btn btn-secondary w-100 mb-3">
+                    <i class="fas fa-book"></i> Manage Books
+                </a>
+                <a href="#" class="btn btn-secondary w-100 mb-3">
+                    <i class="fas fa-users"></i> View Users
+                </a>
+                <a href="#" class="btn btn-secondary w-100 mb-3">
+                    <i class="fas fa-chart-line"></i> View Reports
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-cogs"></i> Franchise Management</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <a href="{% url 'recognition:book_create' %}" class="btn btn-success w-100 mb-3">
+                    <i class="fas fa-plus-circle"></i> Add New Book
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="#" class="btn btn-secondary w-100 mb-3">
+                    <i class="fas fa-edit"></i> Edit Franchise Details
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="#" class="btn btn-secondary w-100 mb-3">
+                    <i class="fas fa-bell"></i> Send Notifications
+                </a>
+            </div>
+            <div class="col-md-3">
+                <form method="post" action="{% url 'recognition:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-100 mb-3">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

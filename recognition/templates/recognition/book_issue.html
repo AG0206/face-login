@@ -1,0 +1,49 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Smart Library - Issue Book{% endblock %}
+
+{% block header_title %}Issue a Book{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-exchange-alt"></i> Issue a Book</h2>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-book"></i> Select a Book to Issue</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="{{ form.book.id_for_label }}">Available Books</label>
+                        {{ form.book }}
+                        {% if form.book.errors %}
+                            <div class="text-danger">{{ form.book.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn w-100">
+                        <i class="fas fa-exchange-alt"></i> Issue Book
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <a href="{% url 'recognition:user_dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                    <a href="{% url 'recognition:book_list' %}" class="btn btn-outline">
+                        <i class="fas fa-list"></i> Browse All Books
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

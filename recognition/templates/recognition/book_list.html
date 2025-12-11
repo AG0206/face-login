@@ -1,0 +1,141 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Smart Library - Books{% endblock %}
+
+{% block header_title %}Book Catalog{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-book"></i> Book Catalog</h2>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h3><i class="fas fa-search"></i> Search Books</h3>
+            </div>
+            <div class="col-md-6">
+                <form method="get">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="search" value="{{ search_query }}" placeholder="Search by title, author, or ISBN...">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>ISBN</th>
+                            <th>Genre</th>
+                            <th>Available</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in page_obj %}
+                        <tr>
+                            <td>{{ book.title }}</td>
+                            <td>{{ book.author }}</td>
+                            <td>{{ book.isbn }}</td>
+                            <td>{{ book.genre }}</td>
+                            <td>
+                                {% if book.available_copies > 0 %}
+                                    <span class="badge bg-success">{{ book.available_copies }} available</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Not available</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if book.available_copies > 0 %}
+                                    <a href="{% url 'recognition:book_issue' %}?book_id={{ book.id }}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-plus-circle"></i> Issue
+                                    </a>
+                                {% else %}
+                                    <button class="btn btn-sm btn-secondary" disabled>
+                                        <i class="fas fa-ban"></i> Not Available
+                                    </button>
+                                {% endif %}
+                                
+                                {% if user.userprofile.user_type == 'franchise_owner' and book.franchise == user.userprofile.franchise %}
+                                    <a href="{% url 'recognition:book_edit' book.id %}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="{% url 'recognition:book_delete' book.id %}" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <p>No books found.</p>
+        {% endif %}
+        
+        {% if user.userprofile.user_type == 'franchise_owner' %}
+            <div class="mt-3">
+                <a href="{% url 'recognition:book_create' %}" class="btn btn-success">
+                    <i class="fas fa-plus-circle"></i> Add New Book
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

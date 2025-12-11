@@ -1,0 +1,55 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Face Detection - Facial Recognition System{% endblock %}
+
+{% block header_title %}Face Detection{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-search"></i> Detect Faces</h2>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-upload"></i> Upload Image</h3>
+    </div>
+    <div class="alert alert-info">
+        <p>This page allows you to upload an image for face detection.</p>
+        <p><strong>Note:</strong> Full face detection functionality requires dlib and face-recognition libraries.</p>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="image">Select Image:</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+            <div class="form-text">Upload a clear frontal face image for best results.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i> Detect Faces
+        </button>
+    </form>
+</div>
+
+{% if result %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-check-circle text-success"></i> Detection Results</h3>
+    </div>
+    <div class="alert alert-success">
+        <pre>{{ result }}</pre>
+    </div>
+</div>
+{% endif %}
+
+{% if error %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-exclamation-triangle text-danger"></i> Error</h3>
+    </div>
+    <div class="alert alert-danger">
+        <p>{{ error }}</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

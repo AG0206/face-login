@@ -1,0 +1,58 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Smart Library - Login{% endblock %}
+
+{% block header_title %}User Login{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-sign-in-alt"></i> Login to Your Account</h2>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-user-lock"></i> Secure Login</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn w-100">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p>Don't have an account?</p>
+                    <a href="{% url 'recognition:register' %}" class="btn btn-outline">
+                        <i class="fas fa-user-plus"></i> Register as Student
+                    </a>
+                    <a href="{% url 'recognition:franchise_owner_register' %}" class="btn btn-outline">
+                        <i class="fas fa-building"></i> Register Franchise
+                    </a>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'recognition:index' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
