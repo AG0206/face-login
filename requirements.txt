@@ -1,6 +1,7 @@
 Django>=5.1.1
 opencv-python>=4.12.0.88
 face-recognition-models>=0.3.0
+gunicorn
 # Core packages for facial recognition (optional but recommended):
 # dlib>=19.24.1
 # face-recognition>=1.3.0
