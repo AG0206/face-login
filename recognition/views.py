@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 # Import models directly
 from .models import FaceRecord, RecognitionLog, Franchise, UserProfile, Book, BookIssue
-from .forms import UserRegistrationForm, FranchiseOwnerRegistrationForm, BookForm, BookIssueForm
+from .forms import UserRegistrationForm, FranchiseOwnerRegistrationForm, BookForm, BookIssueForm, FranchiseEditForm
 from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm, AuthenticationForm
 
 # Create your views here.
@@ -227,6 +227,15 @@ def franchise_owner_dashboard(request):
     total_users = UserProfile.objects.filter(franchise=franchise).count()
     issued_books = BookIssue.objects.filter(book__franchise=franchise, is_returned=False).count()
     
+    # Calculate total revenue from fines
+    from django.db.models import Sum
+    total_revenue = BookIssue.objects.filter(
+        book__franchise=franchise, 
+        is_returned=True
+    ).aggregate(
+        total_fines=Sum('fine_amount')
+    )['total_fines'] or 0.00
+    
     # Get recent books
     recent_books = Book.objects.filter(franchise=franchise).order_by('-created_at')[:5]
     
@@ -235,10 +244,152 @@ def franchise_owner_dashboard(request):
         'total_books': total_books,
         'total_users': total_users,
         'issued_books': issued_books,
+        'total_revenue': total_revenue,
         'recent_books': recent_books,
     }
     
     return render(request, 'recognition/franchise_owner_dashboard.html', context)
+
+
+@login_required
+def franchise_edit(request):
+    """
+    Handle franchise details editing for franchise owners
+    """
+    # Check if user is franchise owner
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        if profile.user_type != 'franchise_owner':
+            messages.error(request, 'Access denied.')
+            return redirect('recognition:index')
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'User profile not found.')
+        return redirect('recognition:index')
+    
+    # Get franchise
+    franchise = profile.franchise
+    
+    if request.method == 'POST':
+        form = FranchiseEditForm(request.POST, instance=franchise)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Franchise details updated successfully.')
+            return redirect('recognition:franchise_owner_dashboard')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = FranchiseEditForm(instance=franchise)
+    
+    return render(request, 'recognition/franchise_edit.html', {'form': form, 'franchise': franchise})
+
+
+@login_required
+def franchise_manage_users(request):
+    """
+    Handle user management for franchise owners
+    """
+    # Check if user is franchise owner
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        if profile.user_type != 'franchise_owner':
+            messages.error(request, 'Access denied.')
+            return redirect('recognition:index')
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'User profile not found.')
+        return redirect('recognition:index')
+    
+    # Get franchise
+    franchise = profile.franchise
+    
+    # Get all users for this franchise with annotated book issue counts
+    from django.db.models import Count, Q
+    users = UserProfile.objects.filter(franchise=franchise).select_related('user').annotate(
+        issued_books_count=Count('user__bookissue', filter=Q(user__bookissue__is_returned=False))
+    )
+    
+    # Pagination
+    paginator = Paginator(users, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'franchise': franchise,
+        'page_obj': page_obj,
+    }
+    
+    return render(request, 'recognition/franchise_manage_users.html', context)
+
+
+@login_required
+def user_book_history(request, user_id):
+    """
+    Display book issue/return history for a specific user
+    """
+    # Check if user is franchise owner
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        if profile.user_type != 'franchise_owner':
+            messages.error(request, 'Access denied.')
+            return redirect('recognition:index')
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'User profile not found.')
+        return redirect('recognition:index')
+    
+    # Get the user profile for the requested user
+    try:
+        user_profile = UserProfile.objects.select_related('user').get(id=user_id, franchise=profile.franchise)
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'User not found.')
+        return redirect('recognition:franchise_manage_users')
+    
+    # Get book issue history for this user
+    book_issues = BookIssue.objects.filter(user=user_profile.user).select_related('book').order_by('-issue_date')
+    
+    # Pagination
+    paginator = Paginator(book_issues, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'user_profile': user_profile,
+        'page_obj': page_obj,
+    }
+    
+    return render(request, 'recognition/user_book_history.html', context)
+
+
+@login_required
+def franchise_transactions(request):
+    """
+    Display all book transactions for the franchise
+    """
+    # Check if user is franchise owner
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        if profile.user_type != 'franchise_owner':
+            messages.error(request, 'Access denied.')
+            return redirect('recognition:index')
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'User profile not found.')
+        return redirect('recognition:index')
+    
+    # Get franchise
+    franchise = profile.franchise
+    
+    # Get all book transactions for this franchise
+    transactions = BookIssue.objects.filter(book__franchise=franchise).select_related('book', 'user').order_by('-issue_date')
+    
+    # Pagination
+    paginator = Paginator(transactions, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'franchise': franchise,
+        'page_obj': page_obj,
+    }
+    
+    return render(request, 'recognition/franchise_transactions.html', context)
 
 @login_required
 def user_dashboard(request):
@@ -259,12 +410,27 @@ def user_dashboard(request):
     issued_books = BookIssue.objects.filter(user=request.user, is_returned=False)
     returned_books = BookIssue.objects.filter(user=request.user, is_returned=True).order_by('-return_date')[:5]
     
+    # Get user's outstanding fines (unpaid fines for returned books)
+    outstanding_fines = BookIssue.objects.filter(
+        user=request.user, 
+        is_returned=True,
+        fine_amount__gt=0
+    )
+    
+    # Calculate total outstanding fine amount
+    from django.db.models import Sum
+    total_outstanding_fines = outstanding_fines.aggregate(
+        total=Sum('fine_amount')
+    )['total'] or 0.00
+    
     # Get user's franchise
     franchise = profile.franchise
     
     context = {
         'issued_books': issued_books,
         'returned_books': returned_books,
+        'outstanding_fines': outstanding_fines,
+        'total_outstanding_fines': total_outstanding_fines,
         'franchise': franchise,
     }
     
@@ -467,16 +633,42 @@ def book_return(request, issue_id):
         return redirect('recognition:index')
     
     if request.method == 'POST':
+        # Calculate fine if book is returned late
+        from datetime import datetime
+        from django.utils import timezone
+        
+        # Get current time
+        now = timezone.now()
+        
+        # Check if book is returned late
+        if now > book_issue.due_date:
+            # Calculate days late
+            days_late = (now - book_issue.due_date).days
+            
+            # Calculate fine (assuming $1 per day late)
+            fine_rate_per_day = 1.00
+            fine_amount = days_late * fine_rate_per_day
+            
+            # Set the fine amount (capped at a reasonable maximum)
+            book_issue.fine_amount = min(fine_amount, 50.00)  # Maximum fine of $50
+        else:
+            # No fine if returned on time or early
+            book_issue.fine_amount = 0.00
+        
         # Mark book as returned
         book_issue.is_returned = True
-        book_issue.return_date = timezone.now()
+        book_issue.return_date = now
         book_issue.save()
         
         # Update book availability
         book_issue.book.available_copies += 1
         book_issue.book.save()
         
-        messages.success(request, f'Book "{book_issue.book.title}" returned successfully.')
+        # Show appropriate message based on fine
+        if book_issue.fine_amount > 0:
+            messages.warning(request, f'Book "{book_issue.book.title}" returned {days_late} days late. A fine of ${book_issue.fine_amount:.2f} has been applied.')
+        else:
+            messages.success(request, f'Book "{book_issue.book.title}" returned successfully.')
         
         # Redirect based on user type
         if profile.user_type == 'student':

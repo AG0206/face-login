@@ -1,0 +1,153 @@
+{% extends 'recognition/base.html' %}
+
+{% block title %}Smart Library - {{ franchise.name }} Transactions{% endblock %}
+
+{% block header_title %}Transactions for {{ franchise.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-exchange-alt"></i> Book Transactions</h2>
+    <p class="text-muted">All book issues and returns for {{ franchise.name }}</p>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0"><i class="fas fa-list"></i> Transaction History</h3>
+    </div>
+    <div class="card-body">
+        {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Book Title</th>
+                            <th>User</th>
+                            <th>Issue Date</th>
+                            <th>Due Date</th>
+                            <th>Return Date</th>
+                            <th>Fine Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in page_obj %}
+                        <tr>
+                            <td>{{ transaction.book.title }}</td>
+                            <td>{{ transaction.user.username }}</td>
+                            <td>{{ transaction.issue_date|date:"M d, Y" }}</td>
+                            <td>{{ transaction.due_date|date:"M d, Y" }}</td>
+                            <td>
+                                {% if transaction.return_date %}
+                                    {{ transaction.return_date|date:"M d, Y" }}
+                                {% else %}
+                                    <span class="text-muted">Not returned</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if transaction.fine_amount > 0 %}
+                                    <span class="badge bg-warning">${{ transaction.fine_amount|floatformat:2 }}</span>
+                                {% elif transaction.is_returned %}
+                                    <span class="badge bg-success">$0.00</span>
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if transaction.is_returned %}
+                                    <span class="badge bg-success">Returned</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Issued</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Transaction history pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-exchange-alt fa-3x text-muted mb-3"></i>
+                <h4>No transactions found</h4>
+                <p class="mb-0">There are no book transactions in your franchise yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{% url 'recognition:franchise_owner_dashboard' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    
+    .page-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .table th {
+        font-weight: 600;
+    }
+    
+    .pagination {
+        margin-top: 2rem;
+    }
+    
+    .badge {
+        font-size: 0.9em;
+    }
+</style>
+{% endblock %}

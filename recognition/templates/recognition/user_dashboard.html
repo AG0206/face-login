@@ -10,6 +10,14 @@
     <p class="text-muted">Franchise: {{ franchise.name }}</p>
 </div>
 
+{% if total_outstanding_fines > 0 %}
+<div class="alert alert-warning">
+    <i class="fas fa-exclamation-circle"></i>
+    <strong>Outstanding Fines:</strong> You currently owe <strong>${{ total_outstanding_fines|floatformat:2 }}</strong> in library fines.
+    Please settle these fines at the franchise office.
+</div>
+{% endif %}
+
 <div class="row">
     <div class="col-md-6 mb-4">
         <div class="card h-100 shadow-sm">
@@ -83,6 +91,7 @@
                                     <th>Title</th>
                                     <th>Author</th>
                                     <th>Return Date</th>
+                                    <th>Fine</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -91,6 +100,13 @@
                                     <td>{{ issue.book.title }}</td>
                                     <td>{{ issue.book.author }}</td>
                                     <td>{{ issue.return_date|date:"M d, Y" }}</td>
+                                    <td>
+                                        {% if issue.fine_amount > 0 %}
+                                            <span class="badge bg-warning">${{ issue.fine_amount|floatformat:2 }}</span>
+                                        {% else %}
+                                            <span class="badge bg-success">$0.00</span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

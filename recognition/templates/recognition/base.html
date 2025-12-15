@@ -625,18 +625,18 @@
                             <span>Books</span>
                         </a>
                     </div>
-                    {% comment %} <div class="nav-item">
-                        <a href="#" class="nav-link">
+                    <div class="nav-item">
+                        <a href="{% url 'recognition:franchise_manage_users' %}" class="nav-link">
                             <i class="fas fa-users"></i>
                             <span>Users</span>
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{% url 'recognition:franchise_transactions' %}" class="nav-link">
                             <i class="fas fa-exchange-alt"></i>
                             <span>Transactions</span>
                         </a>
-                    </div> {% endcomment %}
+                    </div>  
                 {% else %}
                     <div class="nav-item">
                         <a href="{% url 'recognition:user_dashboard' %}" class="nav-link {% if 'user_dashboard' in request.resolver_match.url_name %}active{% endif %}">
@@ -666,12 +666,12 @@
                 </div>
             {% endif %}
             
-            <div class="nav-item">
+            {% comment %} <div class="nav-item">
                 <a href="{% url 'admin:index' %}" class="nav-link">
                     <i class="fas fa-cog"></i>
                     <span>Admin Panel</span>
                 </a>
-            </div>
+            </div> {% endcomment %}
         </div>
         
         <div class="sidebar-footer">

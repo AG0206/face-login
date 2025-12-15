@@ -42,7 +42,7 @@
         <div class="card text-center">
             <div class="card-body">
                 <i class="fas fa-coins fa-3x mb-3" style="color: #ef476f;"></i>
-                <h3>$0.00</h3>
+                <h3>${{ total_revenue|floatformat:2 }}</h3>
                 <p>Revenue</p>
             </div>
         </div>
@@ -118,7 +118,7 @@
     </div>
 </div>
 
-{% comment %} <div class="card">
+<div class="card">
     <div class="card-header">
         <h3><i class="fas fa-cogs"></i> Franchise Management</h3>
     </div>
@@ -130,13 +130,13 @@
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="#" class="btn btn-secondary w-100 mb-3">
+                <a href="{% url 'recognition:franchise_edit' %}" class="btn btn-secondary w-100 mb-3">
                     <i class="fas fa-edit"></i> Edit Franchise Details
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="#" class="btn btn-secondary w-100 mb-3">
-                    <i class="fas fa-bell"></i> Send Notifications
+                <a href="{% url 'recognition:franchise_manage_users' %}" class="btn btn-secondary w-100 mb-3" title="Manage Users">
+                    <i class="fas fa-users"></i> Manage Users
                 </a>
             </div>
             <div class="col-md-3">
@@ -149,5 +149,5 @@
             </div>
         </div>
     </div>
-</div> {% endcomment %}
+</div> 
 {% endblock %}

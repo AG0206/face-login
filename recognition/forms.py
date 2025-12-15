@@ -100,3 +100,15 @@ class BookIssueForm(forms.Form):
                 )
             except UserProfile.DoesNotExist:
                 self.fields['book'].queryset = Book.objects.none()
+
+class FranchiseEditForm(forms.ModelForm):
+    class Meta:
+        model = Franchise
+        fields = ('name', 'location', 'contact_email', 'contact_phone', 'is_active')
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'location': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'contact_phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
